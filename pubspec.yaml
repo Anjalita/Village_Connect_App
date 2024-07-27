@@ -37,4 +37,12 @@ flutter:
   assets:
     - assets\images\user.jpg
     - assets\images\icon.png
+    - assets\images\bg1.png
+    - assets\images\bg2.png
     - assets\images\bg.jpg
+  fonts:
+    - family: Plus Jakarta Sans
+      fonts:
+        - asset: assets\fonts\PlusJakartaSans-Bold.ttf
+        - asset: assets\fonts\PlusJakartaSans-Regular.ttf
+          weight: 700

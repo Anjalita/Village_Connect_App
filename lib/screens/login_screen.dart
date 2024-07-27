@@ -37,6 +37,13 @@ class _LoginScreenState extends State<LoginScreen>
     _animationController.forward();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Preload the background image
+    precacheImage(AssetImage('assets/images/bg1.png'), context);
+  }
+
   Future<void> _login() async {
     final username = _usernameController.text;
     final password = _passwordController.text;
@@ -136,11 +143,18 @@ class _LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
+        fit: StackFit.expand,
         children: [
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Color(0xFF4B39EF),
+          ColorFiltered(
+            colorFilter: ColorFilter.mode(
+              Color.fromARGB(255, 75, 103, 93)
+                  .withOpacity(0.3), // Adjust opacity here
+              BlendMode.darken,
+            ),
+            child: Image.asset(
+              'assets/images/bg1.png',
+              fit: BoxFit.cover,
+            ),
           ),
           Padding(
             padding: EdgeInsets.all(24.0),
@@ -152,10 +166,10 @@ class _LoginScreenState extends State<LoginScreen>
                   child: Column(
                     children: [
                       Text(
-                        'Welcome!!',
+                        'Welcome !!',
                         style: TextStyle(
                           fontFamily: 'Plus Jakarta Sans',
-                          color: Colors.white,
+                          color: Color.fromARGB(255, 255, 255, 255),
                           fontSize: 24,
                           fontWeight: FontWeight.w500,
                         ),
@@ -240,8 +254,10 @@ class _LoginScreenState extends State<LoginScreen>
                               onPressed: _login,
                               child: Text('Login'),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0xFF4B39EF),
-                                foregroundColor: Colors.white,
+                                backgroundColor:
+                                    Color.fromARGB(255, 76, 197, 183),
+                                foregroundColor:
+                                    Color.fromARGB(255, 249, 249, 249),
                                 textStyle: TextStyle(
                                   fontFamily: 'Plus Jakarta Sans',
                                   fontSize: 16,

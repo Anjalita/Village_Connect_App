@@ -216,13 +216,27 @@ class _SignupScreenState extends State<SignupScreen>
     return Scaffold(
       body: Stack(
         children: [
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.7,
+              child: Image.asset(
+                'assets/images/bg1.png', // Replace with your image path
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
           Container(
             width: double.infinity,
             height: double.infinity,
-            color: Color(0xFF4B39EF),
+            color: Colors
+                .transparent, // Use transparent color to let the image show through
           ),
           Padding(
-            padding: EdgeInsets.all(24.0),
+            padding: EdgeInsets.only(
+              left: 24.0,
+              top: 48.0, // Adjust this value for top padding
+              right: 24.0,
+            ),
             child: SingleChildScrollView(
               padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context)

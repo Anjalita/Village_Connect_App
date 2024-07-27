@@ -34,9 +34,23 @@ class _SplashScreenState extends State<SplashScreen>
     )..repeat();
 
     Timer(Duration(seconds: 4), () {
-      // Navigate to login screen after the splash screen
+      // Navigate to login screen with custom transition
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => LoginScreen()),
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              LoginScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
+
+            var tween =
+                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+
+            return SlideTransition(position: offsetAnimation, child: child);
+          },
+        ),
       );
     });
   }
@@ -62,8 +76,8 @@ class _SplashScreenState extends State<SplashScreen>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.black.withOpacity(0.3),
-                  Colors.black.withOpacity(0.6)
+                  Colors.black.withOpacity(0.1),
+                  Colors.black.withOpacity(0.3)
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
