@@ -454,7 +454,7 @@ app.put('/user/profile/update', (req, res) => {
 
 // Fetch all places
 app.get('/places', (req, res) => {
-  db.query('SELECT * FROM places', (err, results) => {
+  db.query('SELECT * FROM places ORDER BY place_name ASC', (err, results) => {
     if (err) {
       return res.status(500).json({ error: 'Failed to fetch places' });
     }
@@ -467,7 +467,7 @@ app.get('/crops/:placeId', (req, res) => {
   const placeId = parseInt(req.params.placeId, 10);
 
   db.query(`
-    SELECT c.crop_name, p.price, p.month_year, c.avg_price
+    SELECT c.crop_name, p.price, p.month_year, p.id
     FROM price p
     JOIN crop c ON p.crop_id = c.id
     WHERE p.place_id = ?
@@ -479,6 +479,20 @@ app.get('/crops/:placeId', (req, res) => {
   });
 });
 
+// Fetch all crops with their average prices
+app.get('/all-crops', (req, res) => {
+  const query = 'SELECT id,crop_name, avg_price FROM crop';
+  
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Database query error:', err);
+      res.status(500).json({ error: 'Internal server error' });
+    } else {
+      res.status(200).json(results);
+    }
+  });
+});
+
 // Update crop price
 app.post('/update-price', (req, res) => {
   const { crop_id, price, month_year } = req.body;
@@ -486,7 +500,7 @@ app.post('/update-price', (req, res) => {
   db.query(`
     UPDATE price
     SET price = ?, month_year = ?
-    WHERE crop_id = ?
+    WHERE id = ?
   `, [price, month_year, crop_id], (err, results) => {
     if (err) {
       return res.status(500).json({ error: 'Failed to update crop price' });
@@ -499,16 +513,32 @@ app.post('/update-price', (req, res) => {
 app.post('/add-price', (req, res) => {
   const { place_id, crop_id, price, month_year } = req.body;
 
+  // Check if the combination of crop_id and place_id exists in the database
   db.query(`
-    INSERT INTO price (place_id, crop_id, price, month_year)
-    VALUES (?, ?, ?, ?)
-  `, [place_id, crop_id, price, month_year], (err, results) => {
+    SELECT * FROM price
+    WHERE place_id = ? AND crop_id = ?
+  `, [place_id, crop_id], (err, results) => {
     if (err) {
-      return res.status(500).json({ error: 'Failed to add new price' });
+      return res.status(500).json({ error: 'Failed to check existing price' });
     }
-    res.json({ message: 'Price added successfully' });
+    
+    if (results.length > 0) {
+      return res.status(400).json({ error: 'Crop is already available in the location ' });
+    }
+
+    // If the combination doesn't exist, proceed to insert the new price
+    db.query(`
+      INSERT INTO price (place_id, crop_id, price, month_year)
+      VALUES (?, ?, ?, ?)
+    `, [place_id, crop_id, price, month_year], (err, results) => {
+      if (err) {
+        return res.status(500).json({ error: 'Failed to add new price' });
+      }
+      res.json({ message: 'Price added successfully' });
+    });
   });
 });
+
 
 // Update crop average price
 app.post('/update-crop', (req, res) => {
