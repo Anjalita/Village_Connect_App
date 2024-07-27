@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'login_screen.dart'; // Import the login screen
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -33,9 +34,9 @@ class _SplashScreenState extends State<SplashScreen>
     )..repeat();
 
     Timer(Duration(seconds: 4), () {
-      // Navigate to home screen after the splash screen
+      // Navigate to login screen after the splash screen
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => HomeScreen()),
+        MaterialPageRoute(builder: (context) => LoginScreen()),
       );
     });
   }
@@ -178,20 +179,6 @@ class _CustomDotsIndicatorState extends State<CustomDotsIndicator> {
           }),
         );
       },
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home Screen'),
-      ),
-      body: Center(
-        child: Text('Welcome to Village Connect!'),
-      ),
     );
   }
 }

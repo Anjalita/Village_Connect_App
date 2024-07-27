@@ -10,6 +10,7 @@ import 'screens/admin_announcements_screen.dart';
 import 'screens/user_profile.dart';
 import 'screens/admin_enquiry_screen.dart';
 import 'screens/admin_suggestion_screen.dart';
+import 'screens/splash_screen.dart';
 
 void main() {
   runApp(VillageApp());
@@ -23,8 +24,9 @@ class VillageApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/login',
+      initialRoute: '/welcome',
       routes: {
+        '/welcome': (context) => SplashScreen(),
         '/login': (context) => LoginScreen(),
         '/admin_home': (context) {
           final username =
