@@ -208,7 +208,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                         ],
                       ),
                       backgroundColor:
-                          Colors.transparent, // Set background to transparent
+                          Colors.teal, // Set background to transparent
                       elevation: 0, // Remove shadow
                       automaticallyImplyLeading: false, // Disable back button
                     )

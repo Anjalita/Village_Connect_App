@@ -169,6 +169,9 @@ class _AdminAnnouncementPageState extends State<AdminAnnouncementPage> {
               Navigator.pop(context);
               _currentAnnouncementId =
                   null; // Clear the current announcement being updated
+              // Clear the text fields when cancel is pressed
+              _titleController.clear();
+              _contentController.clear();
             },
             child: Text('Cancel'),
           ),
@@ -200,79 +203,141 @@ class _AdminAnnouncementPageState extends State<AdminAnnouncementPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true, // Allow body to extend behind AppBar
       appBar: AppBar(
         title: Text('Announcements'),
-        backgroundColor: Colors.teal,
-        automaticallyImplyLeading: false, // Remove the back arrow button
+        backgroundColor: Colors.teal, // Set AppBar color
+        elevation: 0, // Remove shadow
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: _announcements.length,
-                itemBuilder: (context, index) {
-                  final announcement = _announcements[index];
-                  return ListTile(
-                    title: Text(announcement['title']),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(announcement['content']),
-                        SizedBox(height: 4),
-                        Text(
-                          'Created at: ${_formatDate(announcement['created_at'])}', // Only date
-                          style:
-                              TextStyle(color: Colors.grey[600], fontSize: 12),
+      body: Stack(
+        children: [
+          // Background image with opacity
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.5,
+              child: Image.asset(
+                'assets/images/bg1.png',
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          // Main content
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Announcements list
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: _announcements.length,
+                    shrinkWrap:
+                        true, // Ensure it takes up only the space it needs
+                    physics: BouncingScrollPhysics(), // Enable bounce effect
+                    itemBuilder: (context, index) {
+                      final announcement = _announcements[index];
+                      return Container(
+                        margin: const EdgeInsets.symmetric(vertical: 8.0),
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8.0),
+                          border:
+                              Border.all(color: Colors.grey.withOpacity(0.5)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 4.0,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _deleteAnnouncement(announcement['id']),
-                    ),
-                    onTap: () => _showUpdateDialog(
-                      announcement['id'],
-                      announcement['title'],
-                      announcement['content'],
-                    ),
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: 16),
-            TextField(
-              controller: _titleController,
-              decoration: InputDecoration(
-                labelText: 'Title',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 16),
-            TextField(
-              controller: _contentController,
-              decoration: InputDecoration(
-                labelText: 'Content',
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 5,
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _createAnnouncement,
-              child: Text('Create Announcement'),
-            ),
-            if (_message.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  _message,
-                  style: TextStyle(color: Colors.green),
+                        child: ListTile(
+                          title: Text(announcement['title']),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(announcement['content']),
+                              SizedBox(height: 4),
+                              Text(
+                                'Created at: ${_formatDate(announcement['created_at'])}', // Only date
+                                style: TextStyle(
+                                    color: Colors.grey[600], fontSize: 12),
+                              ),
+                            ],
+                          ),
+                          trailing: IconButton(
+                            icon: Icon(Icons.delete, color: Colors.red),
+                            onPressed: () =>
+                                _deleteAnnouncement(announcement['id']),
+                          ),
+                          onTap: () => _showUpdateDialog(
+                            announcement['id'],
+                            announcement['title'],
+                            announcement['content'],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
-          ],
-        ),
+                SizedBox(height: 16),
+                // New announcement section
+                Container(
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 6.0,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      TextField(
+                        controller: _titleController,
+                        decoration: InputDecoration(
+                          labelText: 'Title',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      TextField(
+                        controller: _contentController,
+                        decoration: InputDecoration(
+                          labelText: 'Content',
+                          border: OutlineInputBorder(),
+                        ),
+                        maxLines: 5,
+                      ),
+                      SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: _createAnnouncement,
+                        child: Text('Create Announcement'),
+                      ),
+                      if (_message.isNotEmpty)
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              _message,
+                              style:
+                                  TextStyle(color: Colors.green, fontSize: 16),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

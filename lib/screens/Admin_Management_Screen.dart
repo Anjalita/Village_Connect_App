@@ -102,9 +102,12 @@ class _AdminManagementPageState extends State<AdminManagementPage> {
             borderRadius: BorderRadius.circular(15.0),
           ),
           child: Container(
-            width: MediaQuery.of(context).size.width *
-                0.8, // Increase the width of the dialog
+            width: MediaQuery.of(context).size.width * 0.8,
             padding: EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.8),
+              borderRadius: BorderRadius.circular(15.0),
+            ),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -173,35 +176,48 @@ class _AdminManagementPageState extends State<AdminManagementPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('Admin Management'),
-          ],
-        ),
+        title: Text('Admin Management'),
         backgroundColor: Colors.teal,
       ),
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: adminUsers.length,
-              itemBuilder: (context, index) {
-                final admin = adminUsers[index];
-                return Card(
-                  margin: EdgeInsets.symmetric(vertical: 8.0),
-                  child: ListTile(
-                    contentPadding: EdgeInsets.all(16.0),
-                    title: Text(admin['name']),
-                    subtitle: Text(admin['email']),
-                    trailing: IconButton(
-                      icon: Icon(Icons.remove_circle, color: Colors.red),
-                      onPressed: () => _removeAdmin(admin['id']),
-                    ),
-                  ),
-                );
-              },
+          Opacity(
+            opacity: 0.3, // Adjust the opacity as needed
+            child: Image.asset(
+              'assets/images/bg1.png', // Ensure this path is correct
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
             ),
+          ),
+          Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: adminUsers.length,
+                  itemBuilder: (context, index) {
+                    final admin = adminUsers[index];
+                    return Card(
+                      color: Colors.white.withOpacity(0.8),
+                      margin:
+                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: ListTile(
+                        contentPadding: EdgeInsets.all(16.0),
+                        title: Text(admin['name']),
+                        subtitle: Text(admin['email']),
+                        trailing: IconButton(
+                          icon: Icon(Icons.remove_circle, color: Colors.red),
+                          onPressed: () => _removeAdmin(admin['id']),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ],
       ),

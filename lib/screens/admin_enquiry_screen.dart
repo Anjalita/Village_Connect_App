@@ -107,54 +107,69 @@ class _AdminEnquiryScreenState extends State<AdminEnquiryScreen> {
         backgroundColor: Colors.teal,
         automaticallyImplyLeading: false,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: _queries.length,
-          itemBuilder: (context, index) {
-            final query = _queries[index];
-            final hasResponse =
-                query['response'] != null && query['response'].isNotEmpty;
-            return GestureDetector(
-              onTap: () {
-                if (!hasResponse) {
-                  _showResponseDialog(query['id'], query['response'] ?? '');
-                }
-              },
-              child: Card(
-                margin: EdgeInsets.only(bottom: 16.0),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        query['matter'] ?? 'No Matter',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 8.0),
-                      Text(
-                        'By ${query['username'] ?? 'Unknown'} on ${DateFormat.yMMMd().format(DateTime.parse(query['time'] ?? DateTime.now().toIso8601String()))}',
-                        style: TextStyle(color: Colors.grey[600]),
-                      ),
-                      SizedBox(height: 8.0),
-                      if (hasResponse)
-                        Container() // Blank space if response is available
-                      else
-                        Text(
-                          'Response Awaiting',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                    ],
-                  ),
-                ),
+      body: Stack(
+        children: [
+          // Background image with opacity
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.5,
+              child: Image.asset(
+                'assets/images/bg1.png',
+                fit: BoxFit.cover,
               ),
-            );
-          },
-        ),
+            ),
+          ),
+          // Main content
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ListView.builder(
+              itemCount: _queries.length,
+              itemBuilder: (context, index) {
+                final query = _queries[index];
+                final hasResponse =
+                    query['response'] != null && query['response'].isNotEmpty;
+                return GestureDetector(
+                  onTap: () {
+                    if (!hasResponse) {
+                      _showResponseDialog(query['id'], query['response'] ?? '');
+                    }
+                  },
+                  child: Card(
+                    margin: EdgeInsets.only(bottom: 16.0),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            query['matter'] ?? 'No Matter',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 8.0),
+                          Text(
+                            'By ${query['username'] ?? 'Unknown'} on ${DateFormat.yMMMd().format(DateTime.parse(query['time'] ?? DateTime.now().toIso8601String()))}',
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                          SizedBox(height: 8.0),
+                          if (hasResponse)
+                            Container() // Blank space if response is available
+                          else
+                            Text(
+                              'Response Awaiting',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'dart:convert';
 
 class MarketUpdatesScreen extends StatefulWidget {
   @override
@@ -143,7 +143,7 @@ class _MarketUpdatesScreenState extends State<MarketUpdatesScreen> {
       body: jsonEncode(<String, dynamic>{
         'crop_id': cropId,
         'price': newPrice,
-        'month_year': '${DateTime.now().month}-${DateTime.now().year}',
+        'month_year': DateFormat('MMMM yyyy').format(DateTime.now()),
       }),
     );
 
@@ -263,7 +263,7 @@ class _MarketUpdatesScreenState extends State<MarketUpdatesScreen> {
       );
 
       if (response.statusCode == 200) {
-        _fetchCropsByPlace(_selectedPlaceId);
+        _fetchCropsByPlace(placeId);
       } else if (response.statusCode == 400) {
         final responseData = jsonDecode(response.body);
         _showErrorDialog(responseData['error']);
@@ -275,13 +275,13 @@ class _MarketUpdatesScreenState extends State<MarketUpdatesScreen> {
     }
   }
 
-  void _showErrorDialog(String message) {
+  void _showErrorDialog(String error) {
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Error'),
-          content: Text(message),
+          content: Text(error),
           actions: [
             TextButton(
               onPressed: () {
@@ -295,16 +295,16 @@ class _MarketUpdatesScreenState extends State<MarketUpdatesScreen> {
     );
   }
 
-  void _showCropOptionsDialog() {
+  void _showPopupMenu() {
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Crop Options'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
+                leading: Icon(Icons.update),
                 title: Text('Update Average'),
                 onTap: () {
                   Navigator.pop(context);
@@ -312,10 +312,11 @@ class _MarketUpdatesScreenState extends State<MarketUpdatesScreen> {
                 },
               ),
               ListTile(
+                leading: Icon(Icons.add),
                 title: Text('Add New Crop'),
                 onTap: () {
                   Navigator.pop(context);
-                  _showAddNewCropDialog();
+                  _showAddCropDialog();
                 },
               ),
             ],
@@ -326,91 +327,115 @@ class _MarketUpdatesScreenState extends State<MarketUpdatesScreen> {
   }
 
   void _showUpdateAverageDialog() {
-    final TextEditingController _avgPriceController = TextEditingController();
+    final TextEditingController _averagePriceController =
+        TextEditingController();
     int? _selectedCropId;
 
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text('Update Crop Average'),
-          content: StatefulBuilder(
-            builder: (context, setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  DropdownButton<int>(
-                    value: _selectedCropId,
-                    hint: Text('Select Crop'),
-                    items: _allCrops.map<DropdownMenuItem<int>>((crop) {
-                      return DropdownMenuItem<int>(
-                        value: crop['id'],
-                        child: Text(crop['crop_name']),
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text('Update Average Price'),
+              content: FutureBuilder(
+                future: _fetchAllCrops(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Failed to load crops'));
+                  } else {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        DropdownButtonFormField<int>(
+                          value: _selectedCropId,
+                          hint: Text('Select Crop'),
+                          items: _allCrops.map<DropdownMenuItem<int>>((crop) {
+                            return DropdownMenuItem<int>(
+                              value: crop['id'],
+                              child: Text(crop['crop_name']),
+                            );
+                          }).toList(),
+                          onChanged: (int? newValue) {
+                            setState(() {
+                              _selectedCropId = newValue;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white.withOpacity(0.8),
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        TextField(
+                          controller: _averagePriceController,
+                          decoration: InputDecoration(
+                            labelText: 'Average Price',
+                            filled: true,
+                            fillColor: Colors.white.withOpacity(0.8),
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.number,
+                        ),
+                      ],
+                    );
+                  }
+                },
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_selectedCropId != null &&
+                        _averagePriceController.text.isNotEmpty) {
+                      _updateAveragePrice(
+                        _selectedCropId!,
+                        double.parse(_averagePriceController.text),
                       );
-                    }).toList(),
-                    onChanged: (int? newValue) {
-                      setState(() {
-                        _selectedCropId = newValue;
-                        print(
-                            'Selected Crop ID: $_selectedCropId'); // Debugging
-                      });
-                    },
-                  ),
-                  TextField(
-                    controller: _avgPriceController,
-                    decoration: InputDecoration(labelText: 'Average Price'),
-                    keyboardType: TextInputType.number,
-                  ),
-                ],
-              );
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (_selectedCropId != null &&
-                    _avgPriceController.text.isNotEmpty) {
-                  _updateCropAverage(
-                      _selectedCropId!, double.parse(_avgPriceController.text));
-                  Navigator.pop(context);
-                }
-              },
-              child: Text('Save'),
-            ),
-          ],
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: Text('Save'),
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
 
-  Future<void> _updateCropAverage(int cropId, double avgPrice) async {
+  Future<void> _updateAveragePrice(int cropId, double averagePrice) async {
     final response = await http.post(
-      Uri.parse('http://192.168.5.1:3000/update-crop'),
+      Uri.parse('http://192.168.5.1:3000/update-average-price'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, dynamic>{
         'crop_id': cropId,
-        'avg_price': avgPrice,
+        'average_price': averagePrice,
       }),
     );
 
     if (response.statusCode == 200) {
-      _fetchAllCrops(); // Refresh the list of all crops
+      _fetchCropsByPlace(_selectedPlaceId);
     } else {
-      print('Failed to update crop average price');
+      print('Failed to update average price');
     }
   }
 
-  void _showAddNewCropDialog() {
+  void _showAddCropDialog() {
     final TextEditingController _cropNameController = TextEditingController();
-    final TextEditingController _avgPriceController = TextEditingController();
+    final TextEditingController _averagePriceController =
+        TextEditingController();
 
     showDialog(
       context: context,
@@ -422,11 +447,22 @@ class _MarketUpdatesScreenState extends State<MarketUpdatesScreen> {
             children: [
               TextField(
                 controller: _cropNameController,
-                decoration: InputDecoration(labelText: 'Crop Name'),
+                decoration: InputDecoration(
+                  labelText: 'Crop Name',
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.8),
+                  border: OutlineInputBorder(),
+                ),
               ),
+              SizedBox(height: 8),
               TextField(
-                controller: _avgPriceController,
-                decoration: InputDecoration(labelText: 'Average Price'),
+                controller: _averagePriceController,
+                decoration: InputDecoration(
+                  labelText: 'Average Price',
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.8),
+                  border: OutlineInputBorder(),
+                ),
                 keyboardType: TextInputType.number,
               ),
             ],
@@ -441,12 +477,12 @@ class _MarketUpdatesScreenState extends State<MarketUpdatesScreen> {
             ElevatedButton(
               onPressed: () {
                 if (_cropNameController.text.isNotEmpty &&
-                    _avgPriceController.text.isNotEmpty) {
+                    _averagePriceController.text.isNotEmpty) {
                   _addNewCrop(
                     _cropNameController.text,
-                    double.parse(_avgPriceController.text),
-                    context,
+                    double.parse(_averagePriceController.text),
                   );
+                  Navigator.pop(context);
                 }
               },
               child: Text('Save'),
@@ -457,59 +493,29 @@ class _MarketUpdatesScreenState extends State<MarketUpdatesScreen> {
     );
   }
 
-  Future<void> _addNewCrop(
-      String cropName, double avgPrice, BuildContext context) async {
-    final response = await http.post(
-      Uri.parse('http://192.168.5.1:3000/add-crop'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{
-        'crop_name': cropName,
-        'avg_price': avgPrice,
-      }),
-    );
+  Future<void> _addNewCrop(String cropName, double averagePrice) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.5.1:3000/add-crop'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'crop_name': cropName,
+          'average_price': averagePrice,
+        }),
+      );
 
-    if (response.statusCode == 200) {
-      // Crop added successfully
-      _fetchAllCrops(); // Refresh the list of all crops
-      Navigator.pop(context); // Close the dialog
-    } else if (response.statusCode == 400) {
-      // Crop already exists
-      Navigator.pop(context); // Close the dialog
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Error'),
-          content: Text('Crop already exists'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
-    } else {
-      // Failed to add new crop
-      Navigator.pop(context); // Close the dialog
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Error'),
-          content: Text('Failed to add new crop'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
+      if (response.statusCode == 200) {
+        _fetchAllCrops();
+      } else if (response.statusCode == 400) {
+        final responseData = jsonDecode(response.body);
+        _showErrorDialog(responseData['error']);
+      } else {
+        print('Failed to add new crop');
+      }
+    } catch (e) {
+      print('An error occurred. Please try again later.');
     }
   }
 
@@ -518,68 +524,93 @@ class _MarketUpdatesScreenState extends State<MarketUpdatesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Market Place'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        backgroundColor: Colors.teal,
       ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : _errorMessage.isNotEmpty
-              ? Center(child: Text(_errorMessage))
-              : Column(
-                  children: [
-                    DropdownButton<int>(
-                      value: _selectedPlaceId,
-                      items: _places.map<DropdownMenuItem<int>>((place) {
-                        return DropdownMenuItem<int>(
-                          value: place['id'],
-                          child: Text(place['place_name']),
-                        );
-                      }).toList(),
-                      onChanged: (int? newValue) {
-                        setState(() {
-                          _selectedPlaceId = newValue!;
-                          _fetchCropsByPlace(_selectedPlaceId);
-                        });
-                      },
-                    ),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: _crops.length,
-                        itemBuilder: (context, index) {
-                          final crop = _crops[index];
-                          return ListTile(
-                            title: Text(crop['crop_name']),
-                            subtitle: Text(
-                                'Price: ${crop['price']}\nAverage Price: ${crop['avg_price']}'),
-                            trailing: IconButton(
-                              icon: Icon(Icons.edit),
-                              onPressed: () {
-                                _showEditPriceDialog(crop);
-                              },
-                            ),
-                          );
-                        },
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/bg1.png'),
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+                const Color.fromARGB(255, 255, 255, 255).withOpacity(0.5),
+                BlendMode.lighten),
+          ),
+        ),
+        child: _isLoading
+            ? Center(child: CircularProgressIndicator())
+            : _errorMessage.isNotEmpty
+                ? Center(child: Text(_errorMessage))
+                : Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: DropdownButtonFormField<int>(
+                          value: _selectedPlaceId,
+                          hint: Text('Select Location'),
+                          items: _places.map<DropdownMenuItem<int>>((place) {
+                            return DropdownMenuItem<int>(
+                              value: place['id'],
+                              child: Text(place['place_name']),
+                            );
+                          }).toList(),
+                          onChanged: (int? newValue) {
+                            setState(() {
+                              _selectedPlaceId = newValue!;
+                              _fetchCropsByPlace(_selectedPlaceId);
+                            });
+                          },
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white.withOpacity(0.8),
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-      floatingActionButton: Row(
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: _crops.length,
+                          itemBuilder: (context, index) {
+                            final crop = _crops[index];
+                            return Container(
+                              margin: EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.8),
+                                borderRadius: BorderRadius.circular(8.0),
+                                border: Border.all(
+                                    color: Color.fromARGB(255, 255, 255, 255),
+                                    width: 1.0),
+                              ),
+                              child: ListTile(
+                                title: Text(crop['crop_name']),
+                                subtitle: Text(
+                                    'Price: ${crop['price']}\nAverage Price: ${crop['avg_price']}'),
+                                trailing: IconButton(
+                                  icon: Icon(Icons.edit),
+                                  onPressed: () {
+                                    _showEditPriceDialog(crop);
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    ],
+                  ),
+      ),
+      floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
+            heroTag: 'updateAverage',
+            onPressed: _showPopupMenu,
+            child: Icon(Icons.more_vert),
+          ),
+          SizedBox(height: 10),
+          FloatingActionButton(
+            heroTag: 'addCropPrice',
             onPressed: _showAddPriceDialog,
             child: Icon(Icons.add),
-            heroTag: null, // Ensure unique hero tag if multiple FABs are used
-          ),
-          SizedBox(width: 16),
-          FloatingActionButton(
-            onPressed: _showCropOptionsDialog,
-            child: Icon(Icons.more_horiz),
-            heroTag: null, // Ensure unique hero tag if multiple FABs are used
           ),
         ],
       ),
