@@ -82,94 +82,132 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
         title: Text('Suggestions'),
         backgroundColor: Colors.teal,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: _suggestions.length,
-                itemBuilder: (context, index) {
-                  final suggestion = _suggestions[index];
-                  return Card(
-                    margin: EdgeInsets.only(bottom: 16.0),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            suggestion['title'] ?? 'No Title',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[800], // Title color
-                            ),
+      body: Stack(
+        children: [
+          // Background image
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/bg1.png', // Path to your background image
+              fit: BoxFit.cover,
+              color: const Color.fromARGB(255, 255, 255, 255)
+                  .withOpacity(0.3), // Apply opacity to background
+              colorBlendMode: BlendMode.lighten,
+            ),
+          ),
+          // Content
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: _suggestions.length,
+                    itemBuilder: (context, index) {
+                      final suggestion = _suggestions[index];
+                      return Container(
+                        margin: EdgeInsets.only(bottom: 16.0),
+                        padding: EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(
+                              0.8), // White background with opacity
+                          border: Border.all(
+                            color: Colors.grey[300]!,
+                            width: 1.0,
                           ),
-                          SizedBox(height: 8.0),
-                          Text(
-                            'By ${suggestion['username'] ?? 'Unknown'} on ${DateFormat.yMMMd().format(DateTime.parse(suggestion['created_at'] ?? DateTime.now().toIso8601String()))}',
-                            style: TextStyle(
-                              color: Colors.grey[600], // Date line color
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              suggestion['title'] ?? 'No Title',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey[800], // Title color
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 8.0),
-                          Text(
-                            suggestion['content'] ?? 'No Content',
-                            style: TextStyle(
-                              color: Colors.grey[800], // Content color
+                            SizedBox(height: 8.0),
+                            Text(
+                              'By ${suggestion['username'] ?? 'Unknown'} on ${DateFormat.yMMMd().format(DateTime.parse(suggestion['created_at'] ?? DateTime.now().toIso8601String()))}',
+                              style: TextStyle(
+                                color: Colors.grey[600], // Date line color
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 8.0),
-                          Text(
-                            suggestion['response'] == null ||
-                                    suggestion['response'].isEmpty
-                                ? 'Waiting for Admin response'
-                                : 'Admin : ${suggestion['response']}',
-                            style: TextStyle(
-                              color: suggestion['response'] == null ||
+                            SizedBox(height: 8.0),
+                            Text(
+                              suggestion['content'] ?? 'No Content',
+                              style: TextStyle(
+                                color: Colors.grey[800], // Content color
+                              ),
+                            ),
+                            SizedBox(height: 8.0),
+                            Text(
+                              suggestion['response'] == null ||
                                       suggestion['response'].isEmpty
-                                  ? Colors.red
-                                  : Colors.black,
+                                  ? 'Waiting for Admin response'
+                                  : 'Admin : ${suggestion['response']}',
+                              style: TextStyle(
+                                color: suggestion['response'] == null ||
+                                        suggestion['response'].isEmpty
+                                    ? Colors.red
+                                    : Colors.black,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white
+                        .withOpacity(0.8), // White background with opacity
+                    border: Border.all(
+                      color: Colors.grey[300]!,
+                      width: 1.0,
+                    ),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: _titleController,
+                        decoration: InputDecoration(
+                          labelText: 'Title',
+                          border: OutlineInputBorder(),
+                        ),
                       ),
-                    ),
-                  );
-                },
-              ),
+                      SizedBox(height: 8.0),
+                      TextField(
+                        controller: _contentController,
+                        decoration: InputDecoration(
+                          labelText: 'Content',
+                          border: OutlineInputBorder(),
+                        ),
+                        maxLines: 4,
+                      ),
+                      SizedBox(height: 16.0),
+                      ElevatedButton(
+                        onPressed: _postSuggestion,
+                        child: Text('Post Suggestion'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Colors.teal, // Button background color
+                          foregroundColor: Colors.white, // Button text color
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12.0, horizontal: 16.0),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: Column(
-                children: [
-                  TextField(
-                    controller: _titleController,
-                    decoration: InputDecoration(labelText: 'Title'),
-                  ),
-                  SizedBox(height: 8.0),
-                  TextField(
-                    controller: _contentController,
-                    decoration: InputDecoration(labelText: 'Content'),
-                    maxLines: 4,
-                  ),
-                  SizedBox(height: 16.0),
-                  ElevatedButton(
-                    onPressed: _postSuggestion,
-                    child: Text('Post Suggestion'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal, // Button background color
-                      foregroundColor: Colors.white, // Button text color
-                      padding: EdgeInsets.symmetric(
-                          vertical: 12.0, horizontal: 16.0),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -207,45 +207,95 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           ),
         ],
       ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : _errorMessage.isNotEmpty
-              ? Center(child: Text(_errorMessage))
-              : ListView.builder(
-                  itemCount: _announcements.length,
-                  itemBuilder: (context, index) {
-                    final announcement = _announcements[index];
-                    final dateTimeUtc =
-                        DateTime.parse(announcement['created_at']);
-                    final dateTimeIst = convertUtcToIst(dateTimeUtc);
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Background Image
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/bg1.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          // Semi-transparent Overlay
+          Container(
+            color: const Color.fromARGB(255, 255, 254, 254)
+                .withOpacity(0.5), // Adjust opacity here
+          ),
+          // Content
+          _isLoading
+              ? Center(child: CircularProgressIndicator())
+              : _errorMessage.isNotEmpty
+                  ? Center(child: Text(_errorMessage))
+                  : ListView.builder(
+                      padding: EdgeInsets.all(16.0),
+                      itemCount: _announcements.length,
+                      itemBuilder: (context, index) {
+                        final announcement = _announcements[index];
+                        final dateTimeUtc =
+                            DateTime.parse(announcement['created_at']);
+                        final dateTimeIst = convertUtcToIst(dateTimeUtc);
 
-                    final formattedDate =
-                        DateFormat('dd-MM-yy').format(dateTimeIst);
-                    final formattedTime =
-                        DateFormat('hh:mm a').format(dateTimeIst);
+                        final formattedDate =
+                            DateFormat('dd-MM-yy').format(dateTimeIst);
+                        final formattedTime =
+                            DateFormat('hh:mm a').format(dateTimeIst);
 
-                    return ListTile(
-                      title: Text(
-                        announcement['title'],
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      subtitle: Text(
-                        '$formattedDate • $formattedTime',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                      onTap: () {
-                        _showAnnouncementDialog(announcement);
+                        return Container(
+                          margin: EdgeInsets.symmetric(
+                              vertical: 8.0), // Space between boxes
+                          padding: EdgeInsets.all(12.0), // Internal padding
+                          decoration: BoxDecoration(
+                            color: Colors.white
+                                .withOpacity(0.7), // Adjust opacity here
+                            borderRadius:
+                                BorderRadius.circular(8.0), // Rounded corners
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black
+                                    .withOpacity(0.1), // Shadow color
+                                spreadRadius: 2,
+                                blurRadius: 4,
+                                offset: Offset(0, 2), // Position of shadow
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                announcement['title'],
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 8.0),
+                              Text(
+                                announcement['content'],
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                              SizedBox(height: 8.0),
+                              Text(
+                                '$formattedDate • $formattedTime',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
                       },
-                    );
-                  },
-                ),
+                    ),
+        ],
+      ),
     );
   }
 }

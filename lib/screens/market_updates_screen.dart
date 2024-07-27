@@ -68,66 +68,91 @@ class _MarketUpdatesScreenState extends State<MarketUpdatesScreen> {
         title: Text('Market Updates'),
         backgroundColor: Colors.teal,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 12.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.0),
-                border: Border.all(color: Colors.teal, width: 2.0),
-                color: Colors.white,
-              ),
-              child: DropdownButton<String>(
-                hint: Text('Select Location'),
-                value: selectedLocation,
-                onChanged: _onLocationChanged,
-                underline: SizedBox(), // Hides the default underline
-                isExpanded: true,
-                items: locations.map((location) {
-                  return DropdownMenuItem<String>(
-                    value: location['id'].toString(),
-                    child: Text(
-                      location['place_name'],
-                      style: TextStyle(color: Colors.teal),
-                    ),
-                  );
-                }).toList(),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Background Image
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/bg1.png'),
+                fit: BoxFit.cover,
               ),
             ),
-            if (selectedLocation != null) ...[
-              SizedBox(height: 20),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: crops.length,
-                  itemBuilder: (context, index) {
-                    final crop = crops[index];
-                    final cropName = crop['crop_name'];
-                    final cropPrice = crop['price'];
-                    final avgPriceString =
-                        crop['avg_price']; // Average price as a string
-                    final avgPrice = double.tryParse(avgPriceString) ??
-                        0.0; // Convert to double
-
-                    return Card(
-                      margin: EdgeInsets.only(bottom: 16.0),
-                      elevation: 4.0,
-                      child: ListTile(
-                        title: Text('Market Place'),
-                        subtitle: Text(
-                          'Crop: $cropName\nPrice: $cropPrice (${crop['month_year']})\nAverage Price: ${avgPrice.toStringAsFixed(2)}',
-                          style: TextStyle(fontSize: 16.0),
+          ),
+          // Semi-transparent Overlay
+          Container(
+            color: const Color.fromARGB(255, 255, 254, 254)
+                .withOpacity(0.5), // Adjust opacity here
+          ),
+          // Content
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8.0),
+                    border: Border.all(
+                        color: const Color.fromARGB(255, 255, 255, 255),
+                        width: 2.0),
+                    color: Colors.white.withOpacity(0.7),
+                  ),
+                  child: DropdownButton<String>(
+                    hint: Text('Select Location'),
+                    value: selectedLocation,
+                    onChanged: _onLocationChanged,
+                    underline: SizedBox(), // Hides the default underline
+                    isExpanded: true,
+                    items: locations.map((location) {
+                      return DropdownMenuItem<String>(
+                        value: location['id'].toString(),
+                        child: Text(
+                          location['place_name'],
+                          style: TextStyle(color: Colors.teal),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    }).toList(),
+                  ),
                 ),
-              ),
-            ],
-          ],
-        ),
+                if (selectedLocation != null) ...[
+                  SizedBox(height: 20),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: crops.length,
+                      itemBuilder: (context, index) {
+                        final crop = crops[index];
+                        final cropName = crop['crop_name'];
+                        final cropPrice = crop['price'];
+                        final avgPriceString =
+                            crop['avg_price']; // Average price as a string
+                        final avgPrice = double.tryParse(avgPriceString) ??
+                            0.0; // Convert to double
+
+                        return Opacity(
+                          opacity: 0.8, // Adjust opacity here
+                          child: Card(
+                            margin: EdgeInsets.only(bottom: 16.0),
+                            elevation: 4.0,
+                            child: ListTile(
+                              title: Text('Market Place'),
+                              subtitle: Text(
+                                'Crop: $cropName\nPrice: $cropPrice (${crop['month_year']})\nAverage Price: ${avgPrice.toStringAsFixed(2)}',
+                                style: TextStyle(fontSize: 16.0),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

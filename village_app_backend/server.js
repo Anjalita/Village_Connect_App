@@ -583,6 +583,22 @@ app.post('/add-crop', (req, res) => {
   });
 });
 
+app.get('/admins', (req, res) => {
+  const query = `
+    SELECT name, phone, job_title
+    FROM users
+    WHERE user_type = 'admin'
+  `;
+  
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching admin contacts:', err);
+      res.status(500).send('Server error');
+      return;
+    }
+    res.json(results);
+  });
+});
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);

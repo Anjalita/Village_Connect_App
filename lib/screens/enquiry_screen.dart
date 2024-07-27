@@ -97,84 +97,113 @@ class _EnquiryScreenState extends State<EnquiryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Enquiries'),
-        backgroundColor: Colors.teal,
-      ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : _errorMessage.isNotEmpty
-              ? Center(child: Text(_errorMessage))
-              : Column(
+      body: Stack(
+        children: [
+          // Background Image
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.3, // Adjust opacity here
+              child: Image.asset(
+                'assets/images/bg1.png',
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          // Content on top of background image
+          Column(
+            children: [
+              AppBar(
+                title: Text('Enquiries'),
+                backgroundColor: Colors.teal,
+                elevation: 0,
+              ),
+              Expanded(
+                child: _isLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : _errorMessage.isNotEmpty
+                        ? Center(child: Text(_errorMessage))
+                        : ListView.builder(
+                            itemCount: _enquiries.length,
+                            itemBuilder: (context, index) {
+                              final enquiry = _enquiries[index];
+                              final dateTimeUtc =
+                                  DateTime.parse(enquiry['time']);
+                              final dateTimeIst = convertUtcToIst(dateTimeUtc);
+
+                              final formattedDate =
+                                  DateFormat('dd-MM-yy').format(dateTimeIst);
+                              final formattedTime =
+                                  DateFormat('hh:mm a').format(dateTimeIst);
+
+                              return Container(
+                                margin: EdgeInsets.all(8.0),
+                                padding: EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(
+                                      0.8), // White background with opacity
+                                  border: Border.all(
+                                    color: Colors.grey[300]!,
+                                    width: 1.0,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: ListTile(
+                                  title: Text(
+                                    enquiry['matter'],
+                                    style: TextStyle(
+                                      fontSize: 18, // Increased font size
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    '$formattedDate • $formattedTime',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    _showEnquiryDialog(enquiry);
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+              ),
+              Container(
+                margin: EdgeInsets.all(0),
+                padding: EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: Colors.white
+                      .withOpacity(1), // White background with opacity
+                  border: Border.all(
+                    color: Colors.grey[300]!,
+                    width: 1.0,
+                  ),
+                  borderRadius: BorderRadius.circular(0),
+                ),
+                child: Row(
                   children: [
                     Expanded(
-                      child: ListView.builder(
-                        itemCount: _enquiries.length,
-                        itemBuilder: (context, index) {
-                          final enquiry = _enquiries[index];
-                          final dateTimeUtc = DateTime.parse(enquiry['time']);
-                          final dateTimeIst = convertUtcToIst(dateTimeUtc);
-
-                          final formattedDate =
-                              DateFormat('dd-MM-yy').format(dateTimeIst);
-                          final formattedTime =
-                              DateFormat('hh:mm a').format(dateTimeIst);
-
-                          return Container(
-                            margin: EdgeInsets.all(8.0),
-                            padding: EdgeInsets.all(8.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.grey[300]!,
-                                width: 1.0,
-                              ),
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: ListTile(
-                              title: Text(
-                                enquiry['matter'],
-                                style: TextStyle(
-                                  fontSize: 18, // Increased font size
-                                ),
-                              ),
-                              subtitle: Text(
-                                '$formattedDate • $formattedTime',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[700],
-                                ),
-                              ),
-                              onTap: () {
-                                _showEnquiryDialog(enquiry);
-                              },
-                            ),
-                          );
-                        },
+                      child: TextField(
+                        controller: _enquiryController,
+                        decoration: InputDecoration(
+                          labelText: 'Enter your enquiry',
+                          border: OutlineInputBorder(),
+                        ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _enquiryController,
-                              decoration: InputDecoration(
-                                labelText: 'Enter your enquiry',
-                                border: OutlineInputBorder(),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                          IconButton(
-                            icon: Icon(Icons.send, color: Colors.teal),
-                            onPressed: _createEnquiry,
-                          ),
-                        ],
-                      ),
+                    SizedBox(width: 8),
+                    IconButton(
+                      icon: Icon(Icons.send, color: Colors.teal),
+                      onPressed: _createEnquiry,
                     ),
                   ],
                 ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
