@@ -467,7 +467,7 @@ app.get('/crops/:placeId', (req, res) => {
   const placeId = parseInt(req.params.placeId, 10);
 
   db.query(`
-    SELECT c.crop_name, p.price, p.month_year, p.id
+    SELECT c.crop_name, p.price, p.month_year, p.id, c.avg_price
     FROM price p
     JOIN crop c ON p.crop_id = c.id
     WHERE p.place_id = ?
@@ -560,16 +560,29 @@ app.post('/update-crop', (req, res) => {
 app.post('/add-crop', (req, res) => {
   const { crop_name, avg_price } = req.body;
 
-  db.query(`
-    INSERT INTO crop (crop_name, avg_price)
-    VALUES (?, ?)
-  `, [crop_name, avg_price], (err, results) => {
+  // Check if crop_name already exists
+  db.query('SELECT * FROM crop WHERE crop_name = ?', crop_name, (err, results) => {
     if (err) {
-      return res.status(500).json({ error: 'Failed to add new crop' });
+      return res.status(500).json({ error: 'Failed to check crop existence' });
     }
-    res.json({ message: 'Crop added successfully' });
+    if (results.length > 0) {
+      return res.status(400).json({ error: 'Crop already exists' });
+    }
+
+    // If crop_name does not exist, proceed to insert
+    db.query(
+      'INSERT INTO crop (crop_name, avg_price) VALUES (?, ?)',
+      [crop_name, avg_price],
+      (err, results) => {
+        if (err) {
+          return res.status(500).json({ error: 'Failed to add new crop' });
+        }
+        res.json({ message: 'Crop added successfully' });
+      }
+    );
   });
 });
+
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
