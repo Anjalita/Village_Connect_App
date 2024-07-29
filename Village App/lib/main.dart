@@ -4,12 +4,12 @@ import 'dart:io';
 
 // Import your screens
 import 'screens/login_screen.dart';
-import 'screens/admin_home_screen.dart';
-import 'screens/user_home_screen.dart';
-import 'screens/admin_announcements_screen.dart';
-import 'screens/user_profile.dart';
-import 'screens/admin_enquiry_screen.dart';
-import 'screens/admin_suggestion_screen.dart';
+import 'screens/admin/admin_home_screen.dart';
+import 'screens/user/user_home_screen.dart';
+import 'screens/admin/admin_announcements_screen.dart';
+import 'screens/user/user_profile.dart';
+import 'screens/admin/admin_enquiry_screen.dart';
+import 'screens/admin/admin_suggestion_screen.dart';
 import 'screens/splash_screen.dart';
 
 void main() {

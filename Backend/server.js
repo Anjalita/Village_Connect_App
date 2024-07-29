@@ -2,9 +2,11 @@ const express = require('express');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
 
 const app = express();
 const port = 3000;
+const saltRounds = 10;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -13,7 +15,7 @@ app.use(bodyParser.json());
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'your-password-here',
+  password: '23Ebey@2003',
   database: 'village_app'
 });
 
@@ -37,18 +39,23 @@ app.post('/login', (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
     } else if (results.length > 0) {
       const user = results[0];
-      if (password === user.password) {
-        if (user.activation === 0) {
-          console.log('Account not activated');
-          res.status(200).json({ success: false, message: 'Account not activated' });
+      bcrypt.compare(password, user.password, (err, match) => {
+        if (err) {
+          console.error('Error comparing passwords:', err);
+          res.status(500).json({ error: 'Internal server error' });
+        } else if (match) {
+          if (user.activation === 0) {
+            console.log('Account not activated');
+            res.status(200).json({ success: false, message: 'Account not activated' });
+          } else {
+            console.log('Login successful');
+            res.status(200).json({ success: true, userType: user.user_type });
+          }
         } else {
-          console.log('Login successful');
-          res.status(200).json({ success: true, userType: user.user_type });
+          console.log('Invalid credentials - password mismatch');
+          res.status(401).json({ success: false, message: 'Invalid credentials' });
         }
-      } else {
-        console.log('Invalid credentials - password mismatch');
-        res.status(401).json({ success: false, message: 'Invalid credentials' });
-      }
+      });
     } else {
       console.log('Invalid credentials - user not found');
       res.status(401).json({ success: false, message: 'Invalid credentials' });
@@ -73,17 +80,24 @@ app.post('/signup', (req, res) => {
       res.status(400).json({ error: 'Username already exists' });
     } else {
       // Proceed with registration
-      const query = `
-        INSERT INTO users (username, name, phone, address, job_title, email, password, activation, user_type)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `;
-
-      db.query(query, [username, name, phone, address, jobTitle, email, password, activation, userType], (err, result) => {
+      bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
         if (err) {
-          console.error('Database query error:', err);
-          res.status(500).json({ error: 'Database error' });
+          console.error('Error hashing password:', err);
+          res.status(500).json({ error: 'Internal server error' });
         } else {
-          res.status(200).json({ message: 'User registered successfully. Awaiting activation.' });
+          const query = `
+            INSERT INTO users (username, name, phone, address, job_title, email, password, activation, user_type)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `;
+
+          db.query(query, [username, name, phone, address, jobTitle, email, hashedPassword, activation, userType], (err, result) => {
+            if (err) {
+              console.error('Database query error:', err);
+              res.status(500).json({ error: 'Database error' });
+            } else {
+              res.status(200).json({ message: 'User registered successfully. Awaiting activation.' });
+            }
+          });
         }
       });
     }
@@ -247,7 +261,7 @@ app.put('/admin/respondQuery/:id', (req, res) => {
 
 // Get all admin users
 app.get('/admin/users', (req, res) => {
-  const query = 'SELECT id, username, name, phone, address, job_title, email FROM users WHERE user_type = "admin"';
+  const query = 'SELECT id, username, name, phone, address, job_title, email FROM users WHERE user_type = "admin" AND id != 19';
 
   db.query(query, (err, results) => {
     if (err) {
@@ -292,23 +306,59 @@ app.post('/add-admin', (req, res) => {
       res.status(400).json({ error: 'Username already exists' });
     } else {
       // Proceed with registration
-      const query = `
-        INSERT INTO users (username, password, name, phone, address, job_title, email, activation, user_type)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `;
-
-      db.query(query, [username, password, name, phone, address, job_title, email, activation, userType], (err, result) => {
+      bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
         if (err) {
-          console.error('Database query error:', err);
-          res.status(500).json({ error: 'Database error' });
+          console.error('Error hashing password:', err);
+          res.status(500).json({ error: 'Internal server error' });
         } else {
-          res.status(200).json({ message: 'Admin added successfully' });
+          const query = `
+            INSERT INTO users (username, password, name, phone, address, job_title, email, activation, user_type)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `;
+
+          db.query(query, [username, hashedPassword, name, phone, address, job_title, email, activation, userType], (err, result) => {
+            if (err) {
+              console.error('Database query error:', err);
+              res.status(500).json({ error: 'Database error' });
+            } else {
+              res.status(200).json({ message: 'Admin added successfully' });
+            }
+          });
         }
       });
     }
   });
 });
 
+// Get all users
+app.get('/users', (req, res) => {
+  const query = 'SELECT id, username, name, phone, address, job_title, email FROM users WHERE user_type = "user" AND activation = 1';
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Database query error:', err);
+      res.status(500).json({ error: 'Internal server error' });
+    } else {
+      res.status(200).json(results);
+    }
+  });
+});
+
+// Remove an user
+app.post('/remove-user', (req, res) => {
+  const { user_id } = req.body;
+
+  const query = 'DELETE FROM users WHERE id = ? AND user_type = "user"';
+
+  db.query(query, [user_id], (err, result) => {
+    if (err) {
+      console.error('Database query error:', err);
+      res.status(500).json({ error: 'Database error' });
+    } else {
+      res.status(200).json({ message: 'Admin removed successfully' });
+    }
+  });
+});
 
 // User screen 
 

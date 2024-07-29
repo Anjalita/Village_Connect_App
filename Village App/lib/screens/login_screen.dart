@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'admin_home_screen.dart';
-import 'user_home_screen.dart';
+import 'admin/admin_home_screen.dart';
+import 'user/user_home_screen.dart';
 import 'signup_screen.dart'; // Import the signup screen
 
 class LoginScreen extends StatefulWidget {

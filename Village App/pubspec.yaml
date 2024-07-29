@@ -40,6 +40,8 @@ flutter:
     - assets\images\bg1.png
     - assets\images\bg2.png
     - assets\images\bg.jpg
+    - assets\images\admin.png
+    - assets\images\user.png
   fonts:
     - family: Plus Jakarta Sans
       fonts:
