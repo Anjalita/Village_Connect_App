@@ -257,7 +257,8 @@ class _AdminAnnouncementPageState extends State<AdminAnnouncementPage> {
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(announcement['content']),
+                              Text(announcement['content'],
+                                  textAlign: TextAlign.justify),
                               SizedBox(height: 4),
                               Text(
                                 'Created at: ${_formatDate(announcement['created_at'])}', // Only date

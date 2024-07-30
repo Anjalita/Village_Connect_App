@@ -38,7 +38,7 @@ class _AdminEnquiryScreenState extends State<AdminEnquiryScreen> {
   }
 
   Future<void> _respondToQuery(int id) async {
-    final response = _responseController.text;
+    final responseText = _responseController.text;
 
     try {
       final res = await http.put(
@@ -47,13 +47,18 @@ class _AdminEnquiryScreenState extends State<AdminEnquiryScreen> {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{
-          'response': response,
+          'response': responseText,
         }),
       );
 
       if (res.statusCode == 200) {
         _responseController.clear();
-        _fetchQueries();
+        setState(() {
+          final index = _queries.indexWhere((query) => query['id'] == id);
+          if (index != -1) {
+            _queries[index]['response'] = responseText;
+          }
+        });
         Navigator.of(context).pop(); // Close the dialog after successful update
       } else {
         print('Failed to respond to query. Status code: ${res.statusCode}');
@@ -130,19 +135,18 @@ class _AdminEnquiryScreenState extends State<AdminEnquiryScreen> {
                     query['response'] != null && query['response'].isNotEmpty;
                 return GestureDetector(
                   onTap: () {
-                    if (!hasResponse) {
-                      _showResponseDialog(query['id'], query['response'] ?? '');
-                    }
+                    _showResponseDialog(query['id'], query['response'] ?? '');
                   },
                   child: Card(
                     margin: EdgeInsets.only(bottom: 16.0),
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(16.0), // Add padding here
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             query['matter'] ?? 'No Matter',
+                            textAlign: TextAlign.justify,
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -154,13 +158,14 @@ class _AdminEnquiryScreenState extends State<AdminEnquiryScreen> {
                             style: TextStyle(color: Colors.grey[600]),
                           ),
                           SizedBox(height: 8.0),
-                          if (hasResponse)
-                            Container() // Blank space if response is available
-                          else
-                            Text(
-                              'Response Awaiting',
-                              style: TextStyle(color: Colors.red),
+                          Text(
+                            hasResponse
+                                ? 'Admin: ${query['response']}'
+                                : 'Response Awaiting',
+                            style: TextStyle(
+                              color: hasResponse ? Colors.black : Colors.red,
                             ),
+                          ),
                         ],
                       ),
                     ),

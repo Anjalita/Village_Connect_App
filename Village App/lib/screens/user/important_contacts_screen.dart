@@ -13,7 +13,7 @@ class _ImportantContactsScreenState extends State<ImportantContactsScreen> {
   final List<Map<String, dynamic>> contacts = [
     {
       'name': 'Ambulance',
-      'phone': '102', // Replace with actual number
+      'phone': '108', // Replace with actual number
       'icon': Icons.local_hospital,
     },
     {

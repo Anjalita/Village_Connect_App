@@ -131,6 +131,7 @@ class _AdminSuggestionsScreenState extends State<AdminSuggestionsScreen> {
                   child: ListTile(
                     title: Text(
                       suggestion['title'] ?? 'No Title',
+                      textAlign: TextAlign.justify,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -144,13 +145,17 @@ class _AdminSuggestionsScreenState extends State<AdminSuggestionsScreen> {
                           style: TextStyle(color: Colors.grey[600]),
                         ),
                         SizedBox(height: 8.0),
-                        Text(suggestion['content'] ?? 'No Content'),
+                        Text(
+                          suggestion['content'] ?? 'No Content',
+                          textAlign: TextAlign.justify, // Justify the text
+                        ),
                         SizedBox(height: 8.0),
                         Text(
                           suggestion['response'] == null ||
                                   suggestion['response'].isEmpty
                               ? 'Waiting for admin response'
                               : 'Admin : ${suggestion['response']}',
+                          textAlign: TextAlign.justify, // Justify the text
                           style: TextStyle(
                             color: suggestion['response'] == null ||
                                     suggestion['response'].isEmpty

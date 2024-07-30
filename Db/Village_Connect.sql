@@ -1,5 +1,19 @@
-CREATE DATABASE  IF NOT EXISTS `village_app` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `village_app`;
+-- MySQL dump 10.13  Distrib 8.0.38, for Win64 (x86_64)
+--
+-- Host: localhost    Database: village_app
+-- ------------------------------------------------------
+-- Server version	8.0.38
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
 -- Table structure for table `announcements`
@@ -14,7 +28,7 @@ CREATE TABLE `announcements` (
   `content` text NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -23,7 +37,7 @@ CREATE TABLE `announcements` (
 
 LOCK TABLES `announcements` WRITE;
 /*!40000 ALTER TABLE `announcements` DISABLE KEYS */;
-INSERT INTO `announcements` VALUES (7,'podey','tharathil poyi kallik','2024-07-16 17:34:53'),(9,'awer','aera','2024-07-16 17:35:10'),(10,'Meeting 1','meeting about the water problem will be discussed in the meeting ahlling at 5.00 PM today be present for the meeting','2024-07-17 09:31:05'),(11,'Miniproject','the app is all set to air with few moments.\nBe raedy','2024-07-19 09:41:21'),(12,'Done with editing Admin','Little more changes \nhoping to finish it tom','2024-07-19 18:00:22'),(13,'Checking','Checking 121','2024-07-20 15:20:53'),(15,'sdhsdx','sdfhsdf','2024-07-22 12:22:40'),(17,'Done anoucements page','Ready to flex 01','2024-07-22 12:34:34'),(18,'Done anoucements page','Ready to flex ','2024-07-22 12:36:41'),(19,'ajsofj','gasgsad','2024-07-22 12:57:43'),(20,'CHeck 1','Check','2024-07-29 14:01:06');
+INSERT INTO `announcements` VALUES (7,'Heavy Rainfall','Heavy rainfall affected Mangalore Rural, leading to significant flooding in several villages. The local authorities are working to manage the situation and provide assistance to the affected residents.','2024-07-16 17:34:53'),(15,'PEPPER PRICES MAY INCREASE','The cold climate has led to an increase in pepper consumption. As a result, the current prices for pepper in Cochin are at Rs. 580-585 per kilogram, while the best quality is being traded at Rs. 680-700 per kilogram.','2024-07-22 12:22:40'),(19,'Illegally imported arecanut seized','The price of arecanut beginning to fall, Central Arecanut and Cocoa Marketing and Processing Cooperative Ltd. (CAMPCO), Mangaluru, on Friday, wrote to Prime Minister Narendra Modi seeking his intervention to ensure that when illegally imported arecanut seized by the government is auctioned the floor price is maintained.','2024-07-22 12:57:43'),(22,'Weather update','Expected  rain around 9.00 a.m⛈','2024-07-30 00:49:40'),(23,'Power Outage','Due to a scheduled maintenance, there will be a power outage today from 11:00 AM to 5:00 PM. The affected areas include:\n\nHampankatta\nB B Alabi Road\nMG Road\nFalnir First Cross\nKadri\nBendoorwell\nBejai\nKankanady\nPlease plan accordingly and we apologize for any inconvenience caused.','2024-07-30 00:52:48'),(24,'Test','test announcemnts','2024-07-30 04:17:30');
 /*!40000 ALTER TABLE `announcements` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -94,7 +108,7 @@ CREATE TABLE `price` (
   KEY `place_id` (`place_id`),
   CONSTRAINT `price_ibfk_1` FOREIGN KEY (`crop_id`) REFERENCES `crop` (`id`),
   CONSTRAINT `price_ibfk_2` FOREIGN KEY (`place_id`) REFERENCES `places` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -103,7 +117,7 @@ CREATE TABLE `price` (
 
 LOCK TABLES `price` WRITE;
 /*!40000 ALTER TABLE `price` DISABLE KEYS */;
-INSERT INTO `price` VALUES (6,1,2,0.00,'July 2024'),(7,1,7,36385.00,'July 2024'),(8,1,23,40815.00,'July 2024'),(9,1,11,0.00,'July 2024'),(11,1,14,0.00,'July 2024'),(12,1,27,37447.00,'July 2024'),(13,1,16,0.00,'July 2024'),(14,1,17,33134.00,'July 2024'),(15,1,20,43027.00,'July 2024'),(16,1,21,24876.00,'July 2024'),(17,1,22,32182.00,'July 2024'),(20,1,29,33068.00,'July 2024'),(21,2,17,17080.00,'July 2024'),(25,4,7,0.00,'July 2024'),(26,2,2,0.00,'July 2024'),(27,2,18,0.00,'July 2024');
+INSERT INTO `price` VALUES (6,1,2,0.00,'July 2024'),(7,1,7,36385.00,'July 2024'),(8,1,23,40815.00,'July 2024'),(9,1,11,0.00,'July 2024'),(11,1,14,0.00,'July 2024'),(12,1,27,37447.00,'July 2024'),(13,1,16,0.00,'July 2024'),(14,1,17,33134.00,'July 2024'),(15,1,20,43027.00,'July 2024'),(16,1,21,24876.00,'July 2024'),(17,1,22,32182.00,'July 2024'),(20,1,29,33068.00,'July 2024'),(21,2,17,17080.00,'July 2024'),(25,4,7,0.00,'July 2024'),(26,2,2,0.00,'July 2024'),(27,2,18,0.00,'July 2024'),(28,4,17,10.01,'July 2024');
 /*!40000 ALTER TABLE `price` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -121,7 +135,7 @@ CREATE TABLE `queries` (
   `time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `admin_response` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -130,7 +144,7 @@ CREATE TABLE `queries` (
 
 LOCK TABLES `queries` WRITE;
 /*!40000 ALTER TABLE `queries` DISABLE KEYS */;
-INSERT INTO `queries` VALUES (1,'user','what is current market value of suger cane','2024-07-17 17:33:36','NULL'),(2,'user','asdgsdgsd','2024-07-17 17:51:32','NULL'),(3,'user','Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took','2024-07-17 17:52:52','//////////'),(4,'ebeyjoeregi','I\'d enik mathre kanoolu','2024-07-17 18:07:06','fkfkh'),(5,'','edey','2024-07-19 17:13:53','wegdsgxsdsgdhh'),(6,'user','Done with project - Anjalita','2024-07-21 15:37:50','gsgsjjsngbwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww'),(7,'user','dfndfm','2024-07-22 16:23:18',NULL),(8,'user','Enquiry 1','2024-07-22 17:05:14',NULL);
+INSERT INTO `queries` VALUES (9,'user','Will the price of arecanut increase next month?','2024-07-30 00:56:04',NULL),(10,'ebeyjoeregi','Installation of CCTV for security','2024-07-30 01:10:50','Will discuss regarding that in upcoming general body meeting.'),(11,'user','possiblity of rain today','2024-07-30 04:25:44','high chance');
 /*!40000 ALTER TABLE `queries` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -149,7 +163,7 @@ CREATE TABLE `suggestions` (
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `response` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -158,7 +172,7 @@ CREATE TABLE `suggestions` (
 
 LOCK TABLES `suggestions` WRITE;
 /*!40000 ALTER TABLE `suggestions` DISABLE KEYS */;
-INSERT INTO `suggestions` VALUES (1,'fff','sssss','user','2024-07-17 01:05:54','xxxxxxxx'),(2,'asfas','afsfsa','ebeyjoeregi','2024-07-17 09:23:28',NULL),(3,'asfasf','safsaassa','ebeyjoeregi','2024-07-17 09:27:11','eeee'),(4,'asfasf','fsafas','user','2024-07-17 09:28:40','khff'),(5,'asgasg','gagasasg','user','2024-07-17 09:41:18',NULL),(6,'fxhsd','hdshds','username','2024-07-17 13:42:50',NULL),(7,'dgsgsd.1','dsgdsg','username','2024-07-17 13:43:02',NULL),(8,'ehda sugamalle','adhe suhaman ninko\n','user','2024-07-17 23:29:10',NULL),(9,'edye ellam working Allen?','alleyo ball','ebeyjoeregi','2024-07-17 23:36:54',NULL),(10,'dfnd','bdnbd','','2024-07-19 22:44:08',NULL),(11,'aju','aju','user','2024-07-21 21:11:52',NULL),(12,'ebey','Ebey','ebeyjoeregi','2024-07-21 21:12:32','hdhd'),(13,'Sugegstion','suggestion 1','user','2024-07-22 22:35:43',NULL);
+INSERT INTO `suggestions` VALUES (15,'Poor condition of roads','The roads in many parts of the village are broken down. I request that they be repaired at the earliest, at least by closing the holes in between the roads.','user','2024-07-30 06:38:04',NULL),(16,'General Body meeting','When will the General Body meeting be held?','ebeyjoeregi','2024-07-30 06:49:11','On 15th August 2024');
 /*!40000 ALTER TABLE `suggestions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -191,7 +205,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'alexander','$2b$10$fykowCYgWtFT7dI34CvK0OPt1oKj7addl2lJQlTmK4iIrmtg5xmzy','admin','Alexander','9874563210','Village Home','President',1,'president@villageapp.com'),(2,'aju','$2b$10$fykowCYgWtFT7dI34CvK0OPt1oKj7addl2lJQlTmK4iIrmtg5xmzy','user','Aju Thomas','9874563210','Mary Hill','Student',0,'aju@gmail.com'),(3,'anusha','$2b$10$fykowCYgWtFT7dI34CvK0OPt1oKj7addl2lJQlTmK4iIrmtg5xmzy','user','Anusha Nayak','9874563210','Surathkal','Student',0,'anusha@gmail.com'),(18,'user','$2b$10$fykowCYgWtFT7dI34CvK0OPt1oKj7addl2lJQlTmK4iIrmtg5xmzy','user','User World','1234567891','User Home','User Work',1,'user@user.com'),(19,'admin','$2b$10$fykowCYgWtFT7dI34CvK0OPt1oKj7addl2lJQlTmK4iIrmtg5xmzy','admin','Admin Name','123-456-7890','Admin Address','Administrator',1,'admin@example.com'),(24,'ebeyjoeregi','$2b$10$fykowCYgWtFT7dI34CvK0OPt1oKj7addl2lJQlTmK4iIrmtg5xmzy','user','Ebey Joe Regi','9497698743','Kannur','Fasrmer',1,'ebeyjoeregi@gmail.co'),(26,'anjalita','$2b$10$fykowCYgWtFT7dI34CvK0OPt1oKj7addl2lJQlTmK4iIrmtg5xmzy','user','Anjalita','987456321','Surathkal','Farmer',0,'anjalita@sjec.ac.in'),(30,'veena','$2b$10$fykowCYgWtFT7dI34CvK0OPt1oKj7addl2lJQlTmK4iIrmtg5xmzy','admin','Veena Vijayan','9874563210','Thenguparambil House','Secretary',1,'secretary@villageapp.com'),(32,'sara','$2b$10$fykowCYgWtFT7dI34CvK0OPt1oKj7addl2lJQlTmK4iIrmtg5xmzy','admin','Sara Blonda','9874563210','Village House','Treasurer',1,'treasurer@villageapp.com'),(34,'edwin','$2b$10$fykowCYgWtFT7dI34CvK0OPt1oKj7addl2lJQlTmK4iIrmtg5xmzy','user','Edwin Regi','9874563210','Kannur','Student',0,'edwinregi@gmail.com');
+INSERT INTO `users` VALUES (1,'alexander','$2b$10$fykowCYgWtFT7dI34CvK0OPt1oKj7addl2lJQlTmK4iIrmtg5xmzy','admin','Alexander','9874563210','Village Home','President',1,'president@villageapp.com'),(2,'aju','$2b$10$fykowCYgWtFT7dI34CvK0OPt1oKj7addl2lJQlTmK4iIrmtg5xmzy','user','Aju Thomas','9874563210','Mary Hill','Student',1,'aju@gmail.com'),(3,'anusha','$2b$10$fykowCYgWtFT7dI34CvK0OPt1oKj7addl2lJQlTmK4iIrmtg5xmzy','user','Anusha Nayak','9874563210','Surathkal','Student',0,'anusha@gmail.com'),(18,'user','$2b$10$fykowCYgWtFT7dI34CvK0OPt1oKj7addl2lJQlTmK4iIrmtg5xmzy','user','User World','1234567891','User Home','User Work',1,'user@user.com'),(19,'admin','$2b$10$fykowCYgWtFT7dI34CvK0OPt1oKj7addl2lJQlTmK4iIrmtg5xmzy','admin','Admin Name','123-456-7890','Admin Address','Administrator',1,'admin@example.com'),(24,'ebeyjoeregi','$2b$10$fykowCYgWtFT7dI34CvK0OPt1oKj7addl2lJQlTmK4iIrmtg5xmzy','user','Ebey Joe Regi','9497698743','Kannur','Fasrmer',1,'ebeyjoeregi@gmail.co'),(26,'anjalita','$2b$10$fykowCYgWtFT7dI34CvK0OPt1oKj7addl2lJQlTmK4iIrmtg5xmzy','user','Anjalita','987456321','Surathkal','Farmer',0,'anjalita@sjec.ac.in'),(30,'veena','$2b$10$fykowCYgWtFT7dI34CvK0OPt1oKj7addl2lJQlTmK4iIrmtg5xmzy','admin','Veena Vijayan','9874563210','Thenguparambil House','Secretary',1,'secretary@villageapp.com'),(32,'sara','$2b$10$fykowCYgWtFT7dI34CvK0OPt1oKj7addl2lJQlTmK4iIrmtg5xmzy','admin','Sara Blonda','9874563210','Village House','Treasurer',1,'treasurer@villageapp.com'),(34,'edwin','$2b$10$fykowCYgWtFT7dI34CvK0OPt1oKj7addl2lJQlTmK4iIrmtg5xmzy','user','Edwin Regi','9874563210','Kannur','Student',0,'edwinregi@gmail.com');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -204,4 +218,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-07-29 19:36:57
+-- Dump completed on 2024-07-30 16:53:15
