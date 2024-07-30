@@ -123,4 +123,4 @@ Screenshots of the project is provided in the   `Images   folder.
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ---
-![Home Page](Images\Welcome_Page.png)
+![Home Page](Images/Welcome_Page.png)
