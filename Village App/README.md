@@ -1,16 +1,10 @@
-# village_app
+# Village Connect 🌳
 
-A new Flutter project.
+![Sign In](/Images/SignIn%20page.png)
 
-## Getting Started
+![Admin Home ](/Images/Admin%20Home%20Screen.png)
 
-This project is a starting point for a Flutter application.
+![User Home Screen](/Images/User%20Home%20Screen.png)
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.

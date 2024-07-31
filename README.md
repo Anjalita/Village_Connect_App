@@ -111,7 +111,12 @@ to suggestions, and manage other admins.
          ```bash
         flutter run 
         ```
-Screenshots of the project is provided in the   `Images   folder.
+Screenshots of the project is provided in the   `Images`   folder.
+
+Update the API URLs with the system's IP address on each screen in Flutter.
+
+Feel free to reach out to us with any queries.\
+**ebeyjoeregi13@gmail.com**
 
 ### Contributors
 
